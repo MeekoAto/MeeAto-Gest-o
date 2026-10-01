@@ -1,0 +1,6 @@
+{
+  "name": "MeeAto - Sistema de Gestão Comercial e Conector de Dispositivos",
+  "description": "Ecossistema MeeAto: MeeAto Gestão e MeeAto Connector. Do caixa ao estoque, dos pedidos às impressoras. Tudo conectado em um único ecossistema.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
