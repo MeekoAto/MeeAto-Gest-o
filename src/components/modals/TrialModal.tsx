@@ -1,52 +1,83 @@
 import React, { useState } from 'react';
-import { X, CheckCircle2, ArrowRight, Sparkles, Building, Phone, Mail, Store, Shield } from 'lucide-react';
+import { X, CheckCircle2, ArrowRight, Store, MapPin, Phone, Mail, Building2, HelpCircle, AlertCircle } from 'lucide-react';
 import { Logo } from '../common/Logo';
+import { submitMeeAtoLead } from '../../services/leadService';
 
 interface TrialModalProps {
   isOpen: boolean;
   onClose: () => void;
-  initialPlanName?: string;
+  initialInterest?: string;
 }
 
 export const TrialModal: React.FC<TrialModalProps> = ({
   isOpen,
   onClose,
-  initialPlanName = 'Teste Gratuito',
+  initialInterest = 'Gestão + Connector',
 }) => {
-  const [step, setStep] = useState<1 | 2>(1);
   const [loading, setLoading] = useState(false);
   const [completed, setCompleted] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const [formData, setFormData] = useState({
     name: '',
-    storeName: '',
+    businessName: '',
     whatsapp: '',
     email: '',
-    segment: 'Adegas, Bares & Lounges',
-    hasDevices: true,
+    city: '',
+    state: 'SP',
+    businessType: 'Adegas, Bares & Lounges',
+    interest: initialInterest,
+    contactPreference: 'whatsapp',
+    notes: '',
   });
 
   if (!isOpen) return null;
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
+    setErrorMessage(null);
+
+    const result = await submitMeeAtoLead({
+      name: formData.name,
+      business_name: formData.businessName,
+      whatsapp: formData.whatsapp,
+      email: formData.email,
+      city: formData.city,
+      state: formData.state,
+      business_type: formData.businessType,
+      interest: formData.interest,
+      contact_preference: formData.contactPreference,
+      message: formData.notes,
+    });
+
+    setLoading(false);
+
+    if (result.success) {
       setCompleted(true);
-    }, 900);
+    } else {
+      setErrorMessage(
+        result.error || 'Ocorreu um erro ao processar sua solicitação. Por favor, tente novamente.'
+      );
+    }
   };
 
   const handleResetAndClose = () => {
     setCompleted(false);
-    setStep(1);
+    setErrorMessage(null);
     onClose();
   };
+
+  const brazilianStates = [
+    'AC', 'AL', 'AP', 'AM', 'BA', 'CE', 'DF', 'ES', 'GO', 'MA',
+    'MT', 'MS', 'MG', 'PA', 'PB', 'PR', 'PE', 'PI', 'RJ', 'RN',
+    'RS', 'RO', 'RR', 'SC', 'SP', 'SE', 'TO',
+  ];
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/75 backdrop-blur-sm animate-in fade-in duration-200">
       <div
-        className="bg-white rounded-3xl max-w-lg w-full p-6 sm:p-8 shadow-2xl border border-slate-200 relative animate-in zoom-in-95 duration-150 text-slate-900"
+        className="bg-white rounded-3xl max-w-xl w-full p-6 sm:p-8 shadow-2xl border border-slate-200 relative animate-in zoom-in-95 duration-150 text-slate-900 max-h-[92vh] overflow-y-auto"
         onClick={(e) => e.stopPropagation()}
       >
         <button
@@ -64,33 +95,41 @@ export const TrialModal: React.FC<TrialModalProps> = ({
             </div>
 
             <h3 className="text-2xl font-extrabold text-slate-900">
-              Seu teste de 14 dias foi liberado!
+              Recebemos seu interesse!
             </h3>
 
-            <div className="p-4 bg-slate-50 rounded-2xl border border-slate-200 text-left text-xs space-y-2">
+            <p className="text-sm text-slate-600 max-w-md mx-auto leading-relaxed">
+              Entraremos em contato para apresentar a solução MeeAto e entender as necessidades do seu negócio.
+            </p>
+
+            <div className="p-4 bg-slate-50 rounded-2xl border border-slate-200 text-left text-xs space-y-2 mt-4">
+              <div className="flex justify-between">
+                <span className="text-slate-500">Responsável:</span>
+                <span className="font-bold text-slate-800">{formData.name}</span>
+              </div>
               <div className="flex justify-between">
                 <span className="text-slate-500">Estabelecimento:</span>
-                <span className="font-bold text-slate-800">{formData.storeName || 'Seu Comércio'}</span>
+                <span className="font-bold text-slate-800">{formData.businessName}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-slate-500">Plano Selecionado:</span>
-                <span className="font-bold text-blue-600">{initialPlanName}</span>
+                <span className="text-slate-500">Localização:</span>
+                <span className="font-bold text-slate-800">{formData.city} - {formData.state}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-slate-500">Ambiente:</span>
-                <span className="font-mono text-emerald-600 font-semibold">app.meeato.com.br/demo</span>
+                <span className="text-slate-500">Interesse:</span>
+                <span className="font-bold text-blue-600">{formData.interest}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-slate-500">Preferência de contato:</span>
+                <span className="font-bold text-slate-800 capitalize">{formData.contactPreference}</span>
               </div>
             </div>
 
-            <p className="text-xs text-slate-500 max-w-xs mx-auto">
-              Enviamos seu link de acesso exclusivo e token de pareamento do MeeAto Connector para seu WhatsApp.
-            </p>
-
             <button
               onClick={handleResetAndClose}
-              className="w-full py-3 bg-blue-600 hover:bg-blue-500 text-white rounded-xl text-sm font-semibold shadow-md shadow-blue-500/25 transition-all"
+              className="w-full mt-4 py-3 bg-blue-600 hover:bg-blue-500 text-white rounded-xl text-sm font-semibold shadow-md shadow-blue-500/25 transition-all"
             >
-              Acessar Painel de Demonstração
+              Concluir
             </button>
           </div>
         ) : (
@@ -100,69 +139,61 @@ export const TrialModal: React.FC<TrialModalProps> = ({
               <div className="flex items-center gap-2 mb-2">
                 <Logo variant="gestao" size="sm" theme="light" />
                 <span className="bg-blue-100 text-blue-800 text-[10px] font-bold px-2 py-0.5 rounded-full">
-                  14 Dias Grátis
+                  Demonstração Comercial
                 </span>
               </div>
-              <h2 className="text-2xl font-extrabold text-slate-900">
-                Experimente o MeeAto no seu comércio
+              <h2 className="text-2xl font-extrabold text-slate-900 tracking-tight">
+                Solicitar demonstração MeeAto
               </h2>
               <p className="text-xs text-slate-500 mt-0.5">
-                Sem necessidade de cartão de crédito. Setup em menos de 2 minutos.
+                Preencha os dados do seu comércio para apresentarmos a melhor configuração da solução.
               </p>
             </div>
 
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">
-                  Seu Nome
-                </label>
-                <input
-                  type="text"
-                  required
-                  value={formData.name}
-                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  placeholder="Ex: Rafael Oliveira"
-                  className="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-xs sm:text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
+            {errorMessage && (
+              <div className="mb-4 p-3.5 rounded-xl bg-red-50 border border-red-200 text-red-700 text-xs flex items-center gap-2">
+                <AlertCircle className="w-4 h-4 shrink-0 text-red-600" />
+                <span>{errorMessage}</span>
               </div>
+            )}
 
+            <form onSubmit={handleSubmit} className="space-y-3.5">
+              {/* Nome e Estabelecimento */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label className="block text-xs font-semibold text-slate-700 mb-1">
-                    Nome do Estabelecimento
+                    Seu Nome *
                   </label>
                   <input
                     type="text"
                     required
-                    value={formData.storeName}
-                    onChange={(e) => setFormData({ ...formData, storeName: e.target.value })}
-                    placeholder="Ex: Adega do Vale"
+                    value={formData.name}
+                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                    placeholder="Ex: Rafael Oliveira"
                     className="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-xs sm:text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
 
                 <div>
                   <label className="block text-xs font-semibold text-slate-700 mb-1">
-                    Segmento
+                    Nome do Estabelecimento *
                   </label>
-                  <select
-                    value={formData.segment}
-                    onChange={(e) => setFormData({ ...formData, segment: e.target.value })}
+                  <input
+                    type="text"
+                    required
+                    value={formData.businessName}
+                    onChange={(e) => setFormData({ ...formData, businessName: e.target.value })}
+                    placeholder="Ex: Adega Prime"
                     className="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-xs sm:text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  >
-                    <option value="Adegas, Bares & Lounges">Adega, Bar & Lounge</option>
-                    <option value="Restaurantes & Pizzarias">Restaurante & Pizzaria</option>
-                    <option value="Lanchonetes & Padarias">Lanchonete & Padaria</option>
-                    <option value="Distribuidora de Bebidas">Distribuidora de Bebidas</option>
-                    <option value="Lojas & Varejo">Lojas & Varejo em Geral</option>
-                  </select>
+                  />
                 </div>
               </div>
 
+              {/* WhatsApp e E-mail */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label className="block text-xs font-semibold text-slate-700 mb-1">
-                    WhatsApp com DDD
+                    WhatsApp com DDD *
                   </label>
                   <input
                     type="tel"
@@ -176,7 +207,7 @@ export const TrialModal: React.FC<TrialModalProps> = ({
 
                 <div>
                   <label className="block text-xs font-semibold text-slate-700 mb-1">
-                    E-mail
+                    E-mail *
                   </label>
                   <input
                     type="email"
@@ -189,32 +220,145 @@ export const TrialModal: React.FC<TrialModalProps> = ({
                 </div>
               </div>
 
-              {/* Hardware preference checkbox */}
-              <label className="flex items-start gap-2.5 p-3 rounded-xl bg-slate-50 border border-slate-200 cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={formData.hasDevices}
-                  onChange={(e) => setFormData({ ...formData, hasDevices: e.target.checked })}
-                  className="mt-0.5 rounded text-blue-600 focus:ring-blue-500"
+              {/* Cidade e Estado */}
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <div className="sm:col-span-2">
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">
+                    Cidade *
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={formData.city}
+                    onChange={(e) => setFormData({ ...formData, city: e.target.value })}
+                    placeholder="Ex: São Paulo"
+                    className="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-xs sm:text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">
+                    Estado (UF) *
+                  </label>
+                  <select
+                    value={formData.state}
+                    onChange={(e) => setFormData({ ...formData, state: e.target.value })}
+                    className="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-xs sm:text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  >
+                    {brazilianStates.map((uf) => (
+                      <option key={uf} value={uf}>
+                        {uf}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              {/* Tipo de Comércio e Solução de Interesse */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">
+                    Tipo de Comércio *
+                  </label>
+                  <select
+                    value={formData.businessType}
+                    onChange={(e) => setFormData({ ...formData, businessType: e.target.value })}
+                    className="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-xs sm:text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  >
+                    <option value="Adegas, Bares & Lounges">Adega, Bar & Lounge</option>
+                    <option value="Restaurantes & Pizzarias">Restaurante & Pizzaria</option>
+                    <option value="Lanchonetes & Padarias">Lanchonete & Padaria</option>
+                    <option value="Distribuidora de Bebidas">Distribuidora de Bebidas</option>
+                    <option value="Lojas & Varejo">Lojas & Varejo em Geral</option>
+                    <option value="Outro segmento">Outro segmento</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">
+                    Interesse Principal *
+                  </label>
+                  <select
+                    value={formData.interest}
+                    onChange={(e) => setFormData({ ...formData, interest: e.target.value })}
+                    className="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-xs sm:text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500 font-medium"
+                  >
+                    <option value="Gestão + Connector">Gestão + Connector (Completo)</option>
+                    <option value="MeeAto Gestão">MeeAto Gestão</option>
+                    <option value="MeeAto Connector">MeeAto Connector</option>
+                    <option value="Personalização sob medida">Personalização sob medida</option>
+                  </select>
+                </div>
+              </div>
+
+              {/* Preferência de Contato */}
+              <div>
+                <label className="block text-xs font-semibold text-slate-700 mb-1">
+                  Preferência para contato comercial *
+                </label>
+                <div className="grid grid-cols-3 gap-2">
+                  <label className={`flex items-center justify-center gap-1.5 p-2 rounded-xl border text-xs cursor-pointer transition-all ${formData.contactPreference === 'whatsapp' ? 'bg-blue-50 border-blue-500 text-blue-700 font-semibold' : 'bg-slate-50 border-slate-200 text-slate-600 hover:bg-slate-100'}`}>
+                    <input
+                      type="radio"
+                      name="contactPreference"
+                      value="whatsapp"
+                      checked={formData.contactPreference === 'whatsapp'}
+                      onChange={(e) => setFormData({ ...formData, contactPreference: e.target.value })}
+                      className="sr-only"
+                    />
+                    <span>WhatsApp</span>
+                  </label>
+                  <label className={`flex items-center justify-center gap-1.5 p-2 rounded-xl border text-xs cursor-pointer transition-all ${formData.contactPreference === 'email' ? 'bg-blue-50 border-blue-500 text-blue-700 font-semibold' : 'bg-slate-50 border-slate-200 text-slate-600 hover:bg-slate-100'}`}>
+                    <input
+                      type="radio"
+                      name="contactPreference"
+                      value="email"
+                      checked={formData.contactPreference === 'email'}
+                      onChange={(e) => setFormData({ ...formData, contactPreference: e.target.value })}
+                      className="sr-only"
+                    />
+                    <span>E-mail</span>
+                  </label>
+                  <label className={`flex items-center justify-center gap-1.5 p-2 rounded-xl border text-xs cursor-pointer transition-all ${formData.contactPreference === 'telefone' ? 'bg-blue-50 border-blue-500 text-blue-700 font-semibold' : 'bg-slate-50 border-slate-200 text-slate-600 hover:bg-slate-100'}`}>
+                    <input
+                      type="radio"
+                      name="contactPreference"
+                      value="telefone"
+                      checked={formData.contactPreference === 'telefone'}
+                      onChange={(e) => setFormData({ ...formData, contactPreference: e.target.value })}
+                      className="sr-only"
+                    />
+                    <span>Ligação</span>
+                  </label>
+                </div>
+              </div>
+
+              {/* Observações */}
+              <div>
+                <label className="block text-xs font-semibold text-slate-700 mb-1">
+                  Observações / Necessidades do seu estabelecimento (Opcional)
+                </label>
+                <textarea
+                  rows={2}
+                  value={formData.notes}
+                  onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
+                  placeholder="Ex: Gostaria de saber sobre integração com impressoras de pedidos e controle de comandas..."
+                  className="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-xs sm:text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
                 />
-                <span className="text-xs text-slate-600">
-                  Desejo testar a integração física com impressoras térmicas ou leitor NFC via <strong>MeeAto Connector</strong>.
-                </span>
-              </label>
+              </div>
 
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full mt-2 py-3 bg-blue-600 hover:bg-blue-500 active:scale-[0.98] text-white rounded-xl text-sm font-semibold transition-all flex items-center justify-center gap-2 shadow-md shadow-blue-500/25"
+                className="w-full mt-2 py-3 bg-blue-600 hover:bg-blue-500 active:scale-[0.98] text-white rounded-xl text-sm font-semibold transition-all flex items-center justify-center gap-2 shadow-md shadow-blue-500/25 disabled:opacity-60"
               >
-                <span>{loading ? 'Preparando seu ambiente...' : 'Iniciar Teste de 14 Dias Agora'}</span>
+                <span>{loading ? 'Enviando ao sistema...' : 'Solicitar demonstração'}</span>
                 <ArrowRight className="w-4 h-4" />
               </button>
 
-              <div className="flex items-center justify-center gap-2 text-[11px] text-slate-400">
-                <Shield className="w-3.5 h-3.5 text-emerald-500" />
-                <span>Dados protegidos por criptografia de ponta a ponta</span>
-              </div>
+              <p className="text-[11px] text-slate-400 text-center">
+                Seus dados serão cadastrados de forma segura e utilizados pela equipe MeeAto para agendamento da demonstração.
+              </p>
             </form>
           </div>
         )}

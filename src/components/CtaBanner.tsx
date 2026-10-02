@@ -19,32 +19,32 @@ export const CtaBanner: React.FC<CtaBannerProps> = ({ onOpenTrial }) => {
             </p>
           </div>
 
-          {/* Highlights / Stats as shown in reference */}
-          <div className="grid grid-cols-3 gap-6 sm:gap-12 text-center">
-            <div>
-              <div className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
-                +500
+          {/* Value Pillars replacing fictitious metrics */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 sm:gap-8 text-center">
+            <div className="px-2">
+              <div className="text-xl sm:text-2xl font-extrabold text-white tracking-tight">
+                Agilidade
               </div>
               <div className="text-xs sm:text-sm text-slate-400 mt-1 font-medium">
-                Comércios atendidos
+                Frente de caixa rápida e estável para o seu comércio
               </div>
             </div>
 
-            <div>
-              <div className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
-                +50 mil
+            <div className="px-2">
+              <div className="text-xl sm:text-2xl font-extrabold text-white tracking-tight">
+                Conectividade
               </div>
               <div className="text-xs sm:text-sm text-slate-400 mt-1 font-medium">
-                Vendas processadas por dia
+                Impressoras, maquininhas e periféricos integrados
               </div>
             </div>
 
-            <div>
-              <div className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
-                98%
+            <div className="px-2">
+              <div className="text-xl sm:text-2xl font-extrabold text-white tracking-tight">
+                Flexibilidade
               </div>
               <div className="text-xs sm:text-sm text-slate-400 mt-1 font-medium">
-                Satisfação dos clientes
+                Soluções e adaptações sob medida para sua operação
               </div>
             </div>
           </div>
@@ -55,7 +55,7 @@ export const CtaBanner: React.FC<CtaBannerProps> = ({ onOpenTrial }) => {
               onClick={onOpenTrial}
               className="px-7 py-4 bg-blue-600 hover:bg-blue-500 active:scale-[0.98] text-white font-bold text-base rounded-xl shadow-lg shadow-blue-600/30 hover:shadow-blue-500/50 transition-all flex items-center gap-2 group"
             >
-              <span>Quero testar agora</span>
+              <span>Conhecer o sistema</span>
               <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
             </button>
           </div>

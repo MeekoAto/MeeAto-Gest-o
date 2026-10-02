@@ -1,81 +1,84 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
-  Download,
-  Monitor,
-  Smartphone,
-  Cpu,
-  CheckCircle2,
-  FileCode,
-  ShieldCheck,
-  ChevronRight,
-  ExternalLink,
   Laptop,
+  Cpu,
+  ShieldCheck,
+  ArrowRight,
+  Headphones,
+  CheckCircle2,
 } from 'lucide-react';
 
 interface DownloadsSectionProps {
-  onDownloadRequested: (os: string) => void;
+  onOpenTrial: () => void;
 }
 
 export const DownloadsSection: React.FC<DownloadsSectionProps> = ({
-  onDownloadRequested,
+  onOpenTrial,
 }) => {
-  const [activeOS, setActiveOS] = useState<'windows' | 'linux' | 'android'>('windows');
-
-  const downloads = [
+  const solutions = [
     {
-      id: 'windows',
-      name: 'Windows 10 / 11 (64-bit)',
-      filename: 'MeeAto-Connector-Setup-2.4.2.exe',
-      size: '42.8 MB',
-      version: 'v2.4.2 (Estável)',
-      date: 'Atualizado em Março/2026',
-      desc: 'Instalador padrão para computadores de caixa, totens e servidores locais.',
-      icon: Monitor,
-      requirements: 'Windows 10 ou 11 (64-bit), 200MB livres, USB/Rede.',
+      id: 'gestao',
+      name: 'MeeAto Gestão',
+      badge: 'Sistema Principal',
+      desc: 'Conheça o sistema de gestão e suas possibilidades para o seu comércio.',
+      icon: Laptop,
+      availability: 'Acesso configurado na implantação',
+      features: [
+        'Frente de caixa (PDV) rápido e intuitivo',
+        'Controle de estoque, vendas e comandas',
+        'Relatórios operacionais e financeiros',
+      ],
     },
     {
-      id: 'linux',
-      name: 'Linux (Debian / Ubuntu)',
-      filename: 'meeato-connector_2.4.2_amd64.deb',
-      size: '38.4 MB',
-      version: 'v2.4.2 (Estável)',
-      date: 'Atualizado em Março/2026',
-      desc: 'Pacote .deb e binário compatível com distros Debian, Ubuntu e derivadas.',
+      id: 'connector',
+      name: 'MeeAto Connector',
+      badge: 'Solução Premium',
+      desc: 'Solução premium para integração entre o MeeAto e dispositivos do estabelecimento.',
       icon: Cpu,
-      requirements: 'glibc >= 2.31, systemd para serviço em segundo plano.',
+      availability: 'Disponibilizado conforme a solução contratada',
+      features: [
+        'Comunicação direta com impressoras térmicas',
+        'Integração com maquininhas e leitores NFC',
+        'Módulo leve configurado por técnicos MeeAto',
+      ],
     },
     {
-      id: 'android',
-      name: 'Smart POS (Android APK)',
-      filename: 'MeeAto-Connector-POS-2.4.2.apk',
-      size: '18.1 MB',
-      version: 'v2.4.2 (Estável)',
-      date: 'Atualizado em Março/2026',
-      desc: 'APK homologado para terminais inteligentes Stone, PagBank, Cielo e Elgin.',
-      icon: Smartphone,
-      requirements: 'Android 7.0+, Suporte a NFC nativo do terminal.',
+      id: 'implantacao',
+      name: 'Implantação & Acesso',
+      badge: 'Atendimento Técnico',
+      desc: 'Os acessos e instaladores são disponibilizados conforme a solução contratada.',
+      icon: Headphones,
+      availability: 'Suporte direto para seu estabelecimento',
+      features: [
+        'Análise prévia dos equipamentos do local',
+        'Configuração assistida e testes práticos',
+        'Treinamento e acompanhamento operacional',
+      ],
     },
   ];
 
   return (
-    <section id="downloads" className="py-20 sm:py-24 bg-slate-50 border-b border-slate-200">
+    <section id="demonstracao" className="relative py-20 sm:py-24 bg-slate-50 border-b border-slate-200">
+      {/* Anchor for backward compatibility with #downloads */}
+      <span id="downloads" className="absolute -top-24 pointer-events-none" />
+
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <div className="text-center max-w-3xl mx-auto mb-12">
           <span className="text-xs font-bold text-blue-600 uppercase tracking-wider">
-            Downloads & Integrações
+            Acesso & Implantação
           </span>
           <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900 mt-1 tracking-tight">
-            Baixe o MeeAto Connector
+            Tenha acesso à solução MeeAto
           </h2>
-          <p className="text-slate-600 text-sm sm:text-base mt-2">
-            Instale o módulo de comunicação e conecte impressoras, leitores NFC e terminais de pagamento ao seu MeeAto Gestão em menos de 2 minutos.
+          <p className="text-slate-600 text-sm sm:text-base mt-2 leading-relaxed">
+            Conheça as soluções MeeAto e descubra a configuração ideal para o seu estabelecimento. Os acessos e instaladores são disponibilizados conforme a solução contratada.
           </p>
         </div>
 
-        {/* Download Cards Grid */}
+        {/* Informative Cards Grid */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-          {downloads.map((item) => {
+          {solutions.map((item) => {
             const Icon = item.icon;
             return (
               <div
@@ -87,50 +90,48 @@ export const DownloadsSection: React.FC<DownloadsSectionProps> = ({
                     <div className="w-12 h-12 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center">
                       <Icon className="w-6 h-6" />
                     </div>
-                    <span className="text-[11px] font-mono font-semibold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
-                      {item.version}
+                    <span className="text-[11px] font-semibold text-blue-700 bg-blue-50 px-2.5 py-0.5 rounded-full border border-blue-200">
+                      {item.badge}
                     </span>
                   </div>
 
                   <h3 className="text-lg font-bold text-slate-900">{item.name}</h3>
-                  <p className="text-xs text-slate-500 mt-1 mb-4 leading-relaxed">
+                  <p className="text-xs text-slate-600 mt-2 mb-4 leading-relaxed">
                     {item.desc}
                   </p>
 
-                  <div className="space-y-1.5 text-xs text-slate-600 py-3 border-y border-slate-100 font-mono">
-                    <div className="flex justify-between">
-                      <span className="text-slate-400">Arquivo:</span>
-                      <span className="truncate max-w-[170px] text-slate-700">{item.filename}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-slate-400">Tamanho:</span>
-                      <span>{item.size}</span>
-                    </div>
-                  </div>
+                  <ul className="space-y-2 py-3 border-y border-slate-100 text-xs text-slate-600">
+                    {item.features.map((feat, idx) => (
+                      <li key={idx} className="flex items-start gap-2">
+                        <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" />
+                        <span>{feat}</span>
+                      </li>
+                    ))}
+                  </ul>
                 </div>
 
                 <div className="pt-5">
+                  <div className="text-[11px] text-slate-500 mb-3 text-center">
+                    {item.availability}
+                  </div>
                   <button
-                    onClick={() => onDownloadRequested(item.name)}
+                    onClick={onOpenTrial}
                     className="w-full py-3 bg-blue-600 hover:bg-blue-500 active:scale-[0.98] text-white rounded-xl text-sm font-semibold flex items-center justify-center gap-2 shadow-sm transition-all"
                   >
-                    <Download className="w-4 h-4" />
-                    <span>Download {item.id === 'windows' ? '.EXE' : item.id === 'linux' ? '.DEB' : '.APK'}</span>
+                    <span>Solicitar demonstração</span>
+                    <ArrowRight className="w-4 h-4" />
                   </button>
-                  <p className="text-[10px] text-slate-400 text-center mt-2">
-                    {item.requirements}
-                  </p>
                 </div>
               </div>
             );
           })}
         </div>
 
-        {/* 3 Step Installation Flow */}
+        {/* 3 Step Onboarding Flow */}
         <div className="bg-white rounded-2xl p-6 sm:p-8 border border-slate-200 shadow-sm">
           <h3 className="text-lg font-bold text-slate-900 mb-6 flex items-center gap-2">
             <ShieldCheck className="w-5 h-5 text-blue-600" />
-            <span>Como funciona a instalação do MeeAto Connector</span>
+            <span>Como funciona a contratação e acesso ao MeeAto</span>
           </h3>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -139,9 +140,9 @@ export const DownloadsSection: React.FC<DownloadsSectionProps> = ({
                 1
               </div>
               <div>
-                <h4 className="text-sm font-bold text-slate-900">Baixe e execute</h4>
+                <h4 className="text-sm font-bold text-slate-900">Solicite uma demonstração</h4>
                 <p className="text-xs text-slate-600 mt-1 leading-relaxed">
-                  Faça o download do instalador correspondente ao sistema operacional do seu ponto de venda (PDV).
+                  Preencha os dados do seu comércio. Nossa equipe entrará em contato para entender sua rotina e objetivos.
                 </p>
               </div>
             </div>
@@ -151,9 +152,9 @@ export const DownloadsSection: React.FC<DownloadsSectionProps> = ({
                 2
               </div>
               <div>
-                <h4 className="text-sm font-bold text-slate-900">Conecte os dispositivos</h4>
+                <h4 className="text-sm font-bold text-slate-900">Definição da solução</h4>
                 <p className="text-xs text-slate-600 mt-1 leading-relaxed">
-                  Ligue sua impressora térmica, maquininha ou leitor NFC. O Connector detecta as portas ativas automaticamente.
+                  Identificamos os módulos necessários do MeeAto Gestão e avaliamos os periféricos a serem integrados com o Connector.
                 </p>
               </div>
             </div>
@@ -163,9 +164,9 @@ export const DownloadsSection: React.FC<DownloadsSectionProps> = ({
                 3
               </div>
               <div>
-                <h4 className="text-sm font-bold text-slate-900">Vincule ao MeeAto Gestão</h4>
+                <h4 className="text-sm font-bold text-slate-900">Acesso e implantação</h4>
                 <p className="text-xs text-slate-600 mt-1 leading-relaxed">
-                  Copie o Token de Pareamento exibido na tela do seu MeeAto Gestão e cole no Connector. Pronto!
+                  Fornecemos os acessos e instaladores homologados para o seu comércio operar com máxima eficiência e suporte contínuo.
                 </p>
               </div>
             </div>

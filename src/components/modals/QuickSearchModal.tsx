@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { Search, X, ArrowRight, Store, Cpu, DollarSign, Download, Headphones, Shield, FileText } from 'lucide-react';
+import { Search, X, ArrowRight, Store, Cpu, DollarSign, Headphones, Shield, Laptop } from 'lucide-react';
 
 interface QuickSearchModalProps {
   isOpen: boolean;
   onClose: () => void;
   onNavigate: (targetId: string) => void;
   onOpenTrial: () => void;
-  onOpenDownload: () => void;
 }
 
 export const QuickSearchModal: React.FC<QuickSearchModalProps> = ({
@@ -14,7 +13,6 @@ export const QuickSearchModal: React.FC<QuickSearchModalProps> = ({
   onClose,
   onNavigate,
   onOpenTrial,
-  onOpenDownload,
 }) => {
   const [query, setQuery] = useState('');
 
@@ -47,7 +45,7 @@ export const QuickSearchModal: React.FC<QuickSearchModalProps> = ({
     },
     {
       title: 'MeeAto Connector',
-      desc: 'Comunicação direta com impressoras térmicas, maquininhas e leitores NFC.',
+      desc: 'Solução premium de comunicação com impressoras, maquininhas e leitores NFC.',
       action: () => {
         onNavigate('connector');
         onClose();
@@ -56,44 +54,44 @@ export const QuickSearchModal: React.FC<QuickSearchModalProps> = ({
       badge: 'Dispositivos',
     },
     {
-      title: 'Planos & Preços',
-      desc: 'Valores, planos Essencial, Profissional e teste gratuito de 14 dias.',
+      title: 'Soluções & Investimento',
+      desc: 'Soluções adaptáveis, proposta personalizada e modelo sob medida.',
       action: () => {
-        onNavigate('planos');
+        onNavigate('solucoes');
         onClose();
       },
       icon: DollarSign,
-      badge: 'Preços',
+      badge: 'Soluções',
     },
     {
-      title: 'Baixar MeeAto Connector',
-      desc: 'Instalador para Windows 10/11, Linux (.deb) e terminais Smart POS.',
+      title: 'Acesso & Implantação',
+      desc: 'Entenda como funciona a disponibilização e implantação assistida do sistema.',
       action: () => {
-        onOpenDownload();
+        onNavigate('demonstracao');
         onClose();
       },
-      icon: Download,
-      badge: 'Download',
+      icon: Laptop,
+      badge: 'Acesso',
     },
     {
-      title: 'Testar Gratuitamente',
-      desc: 'Comece seu teste completo por 14 dias sem necessidade de cartão.',
+      title: 'Solicitar Demonstração',
+      desc: 'Conheça o sistema na prática e receba uma demonstração adaptada ao seu comércio.',
       action: () => {
         onOpenTrial();
         onClose();
       },
       icon: Shield,
-      badge: 'Trial',
+      badge: 'Demonstração',
     },
     {
       title: 'Suporte & WhatsApp',
-      desc: 'Atendimento especializado para configurações e dúvidas da sua loja.',
+      desc: 'Atendimento humanizado para configurações e dúvidas da sua operação.',
       action: () => {
         onNavigate('suporte');
         onClose();
       },
       icon: Headphones,
-      badge: 'Ajuda',
+      badge: 'Suporte',
     },
   ];
 
@@ -118,7 +116,7 @@ export const QuickSearchModal: React.FC<QuickSearchModalProps> = ({
             autoFocus
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Buscar por módulo, funcionalidade, download ou plano..."
+            placeholder="Buscar por módulo, funcionalidade ou demonstração..."
             className="w-full text-sm text-slate-800 placeholder-slate-400 focus:outline-none"
           />
           <button

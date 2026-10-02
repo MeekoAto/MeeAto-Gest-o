@@ -1,11 +1,8 @@
 import React from 'react';
-import { Logo } from './common/Logo';
 import {
   Instagram,
   Facebook,
-  Youtube,
   Linkedin,
-  Shield,
   ArrowUp,
 } from 'lucide-react';
 
@@ -26,10 +23,9 @@ export const Footer: React.FC<FooterProps> = ({
     { name: 'Início', href: '#inicio' },
     { name: 'MeeAto Gestão', href: '#gestao' },
     { name: 'Connector', href: '#connector' },
-    { name: 'Planos', href: '#planos' },
-    { name: 'Downloads', href: '#downloads' },
+    { name: 'Soluções', href: '#solucoes' },
+    { name: 'Demonstração', href: '#demonstracao' },
     { name: 'Suporte', href: '#suporte' },
-    { name: 'Blog', href: '#blog' },
     { name: 'Contato', href: '#contato' },
   ];
 
@@ -53,41 +49,32 @@ export const Footer: React.FC<FooterProps> = ({
 
           {/* Right Section: Social & Handwritten phrase */}
           <div className="flex flex-col sm:flex-row items-center gap-6">
-            {/* Social Icons */}
+            {/* Social Icons (WebAto Studio) */}
             <div className="flex items-center gap-3">
               <a
-                href="https://instagram.com"
+                href="https://www.instagram.com/webato_studio/"
                 target="_blank"
-                rel="noreferrer"
+                rel="noopener noreferrer"
                 className="p-2 rounded-lg bg-slate-900 hover:bg-slate-800 text-slate-300 hover:text-white transition-colors"
-                aria-label="Instagram"
+                aria-label="Instagram WebAto Studio"
               >
                 <Instagram className="w-4 h-4" />
               </a>
               <a
-                href="https://facebook.com"
+                href="https://www.facebook.com/WebAtoStudio/"
                 target="_blank"
-                rel="noreferrer"
+                rel="noopener noreferrer"
                 className="p-2 rounded-lg bg-slate-900 hover:bg-slate-800 text-slate-300 hover:text-white transition-colors"
-                aria-label="Facebook"
+                aria-label="Facebook WebAto Studio"
               >
                 <Facebook className="w-4 h-4" />
               </a>
               <a
-                href="https://youtube.com"
+                href="https://www.linkedin.com/in/webatostudio/"
                 target="_blank"
-                rel="noreferrer"
+                rel="noopener noreferrer"
                 className="p-2 rounded-lg bg-slate-900 hover:bg-slate-800 text-slate-300 hover:text-white transition-colors"
-                aria-label="YouTube"
-              >
-                <Youtube className="w-4 h-4" />
-              </a>
-              <a
-                href="https://linkedin.com"
-                target="_blank"
-                rel="noreferrer"
-                className="p-2 rounded-lg bg-slate-900 hover:bg-slate-800 text-slate-300 hover:text-white transition-colors"
-                aria-label="LinkedIn"
+                aria-label="LinkedIn WebAto Studio"
               >
                 <Linkedin className="w-4 h-4" />
               </a>
@@ -102,10 +89,22 @@ export const Footer: React.FC<FooterProps> = ({
           </div>
         </div>
 
-        {/* Bottom Row: Legal & Copyright */}
+        {/* Bottom Row: Legal & Copyright with WebAto Studio credit */}
         <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-[11px] text-slate-500">
-          <div>
-            © {new Date().getFullYear()} MeeAto. Todos os direitos reservados.
+          <div className="flex flex-wrap items-center gap-2 text-center sm:text-left">
+            <span>© {new Date().getFullYear()} MeeAto. Todos os direitos reservados.</span>
+            <span className="hidden sm:inline text-slate-700">•</span>
+            <span>
+              Desenvolvido por{' '}
+              <a
+                href="https://webato-studio.vercel.app/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-slate-400 hover:text-white transition-colors underline underline-offset-2 font-medium"
+              >
+                WebAto Studio
+              </a>
+            </span>
           </div>
 
           <div className="flex items-center gap-6">

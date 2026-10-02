@@ -9,37 +9,18 @@ import { SupportSection } from './components/SupportSection';
 import { CtaBanner } from './components/CtaBanner';
 import { Footer } from './components/Footer';
 
-import { AuthModal } from './components/modals/AuthModal';
 import { TrialModal } from './components/modals/TrialModal';
-import { ConnectorDownloadModal } from './components/modals/ConnectorDownloadModal';
 import { QuickSearchModal } from './components/modals/QuickSearchModal';
 import { PolicyModal } from './components/modals/PolicyModal';
-import { Plan } from './types';
 
 export default function App() {
   // Modal states
-  const [authModal, setAuthModal] = useState<{
-    isOpen: boolean;
-    mode: 'login' | 'register';
-  }>({
-    isOpen: false,
-    mode: 'login',
-  });
-
   const [trialModal, setTrialModal] = useState<{
     isOpen: boolean;
-    planName: string;
+    interest: string;
   }>({
     isOpen: false,
-    planName: 'Teste Gratuito',
-  });
-
-  const [downloadModal, setDownloadModal] = useState<{
-    isOpen: boolean;
-    selectedOS: string;
-  }>({
-    isOpen: false,
-    selectedOS: 'Windows 10 / 11 (64-bit)',
+    interest: 'Gestão + Connector',
   });
 
   const [searchModalOpen, setSearchModalOpen] = useState(false);
@@ -53,29 +34,8 @@ export default function App() {
   });
 
   // Action handlers
-  const handleOpenLogin = () => {
-    setAuthModal({ isOpen: true, mode: 'login' });
-  };
-
-  const handleOpenRegister = () => {
-    setAuthModal({ isOpen: true, mode: 'register' });
-  };
-
-  const handleOpenTrial = (planName: string = 'Teste Gratuito') => {
-    setTrialModal({ isOpen: true, planName });
-  };
-
-  const handleOpenDownload = (osName: string = 'Windows 10 / 11 (64-bit)') => {
-    setDownloadModal({ isOpen: true, selectedOS: osName });
-  };
-
-  const handleSelectPlan = (plan: Plan, billingCycle: 'monthly' | 'annual') => {
-    if (plan.id === 'free_trial') {
-      handleOpenTrial(plan.name);
-    } else {
-      // Trigger registration/trial configured with the selected tier
-      handleOpenTrial(`${plan.name} (${billingCycle === 'annual' ? 'Anual' : 'Mensal'})`);
-    }
+  const handleOpenTrial = (interest: string = 'Gestão + Connector') => {
+    setTrialModal({ isOpen: true, interest });
   };
 
   const scrollToSection = (sectionId: string) => {
@@ -87,10 +47,9 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-slate-950 font-sans selection:bg-blue-600 selection:text-white">
-      {/* 1. Header with brand and menu */}
+      {/* 1. Header with brand and menu (without Entrar button) */}
       <Header
-        onOpenLogin={handleOpenLogin}
-        onOpenTrial={() => handleOpenTrial('Teste Gratuito')}
+        onOpenTrial={() => handleOpenTrial('Gestão + Connector')}
         onOpenSearch={() => setSearchModalOpen(true)}
       />
 
@@ -98,7 +57,7 @@ export default function App() {
       <main>
         {/* 2. Hero Section */}
         <Hero
-          onOpenTrial={() => handleOpenTrial('Teste Gratuito')}
+          onOpenTrial={() => handleOpenTrial('MeeAto Gestão')}
           onExploreSystem={() => scrollToSection('gestao')}
         />
 
@@ -107,29 +66,29 @@ export default function App() {
 
         {/* 4. Products Duo Cards (MeeAto Gestão + MeeAto Connector) & Deep Dives */}
         <ProductsSection
-          onOpenTrial={() => handleOpenTrial('MeeAto Gestão Demo')}
-          onOpenDownload={() => handleOpenDownload('Windows 10 / 11 (64-bit)')}
+          onOpenTrial={() => handleOpenTrial('MeeAto Gestão')}
         />
 
-        {/* 5. Plans and Pricing Section */}
+        {/* 5. Soluções e Investimento */}
         <PricingSection
-          onSelectPlan={handleSelectPlan}
+          onOpenTrial={() => handleOpenTrial('MeeAto Gestão')}
           onOpenContact={() => scrollToSection('contato')}
+          onExploreConnector={() => scrollToSection('connector')}
         />
 
-        {/* 6. Downloads Section for MeeAto Connector */}
+        {/* 6. Informative Access & Implementation Section */}
         <DownloadsSection
-          onDownloadRequested={(os) => handleOpenDownload(os)}
+          onOpenTrial={() => handleOpenTrial('MeeAto Connector')}
         />
 
         {/* 7. Support & Contact Section */}
         <SupportSection
-          onOpenTrial={() => handleOpenTrial('Teste Gratuito')}
+          onOpenTrial={() => handleOpenTrial('Gestão + Connector')}
         />
 
-        {/* 8. Final CTA & Stats Banner */}
+        {/* 8. Final CTA & Value Pillars Banner */}
         <CtaBanner
-          onOpenTrial={() => handleOpenTrial('Teste Gratuito')}
+          onOpenTrial={() => handleOpenTrial('Gestão + Connector')}
         />
       </main>
 
@@ -139,33 +98,22 @@ export default function App() {
         onOpenTerms={() => setPolicyModal({ isOpen: true, type: 'terms' })}
       />
 
-      {/* Prepared Feature Modals */}
-      <AuthModal
-        isOpen={authModal.isOpen}
-        onClose={() => setAuthModal({ ...authModal, isOpen: false })}
-        defaultMode={authModal.mode}
-      />
-
+      {/* Unified Demonstration Request Modal */}
       <TrialModal
         isOpen={trialModal.isOpen}
         onClose={() => setTrialModal({ ...trialModal, isOpen: false })}
-        initialPlanName={trialModal.planName}
+        initialInterest={trialModal.interest}
       />
 
-      <ConnectorDownloadModal
-        isOpen={downloadModal.isOpen}
-        onClose={() => setDownloadModal({ ...downloadModal, isOpen: false })}
-        selectedOS={downloadModal.selectedOS}
-      />
-
+      {/* Quick Search Modal */}
       <QuickSearchModal
         isOpen={searchModalOpen}
         onClose={() => setSearchModalOpen(false)}
         onNavigate={scrollToSection}
-        onOpenTrial={() => handleOpenTrial('Teste Gratuito')}
-        onOpenDownload={() => handleOpenDownload('Windows 10 / 11 (64-bit)')}
+        onOpenTrial={() => handleOpenTrial('Gestão + Connector')}
       />
 
+      {/* Policy and Terms Modal */}
       <PolicyModal
         isOpen={policyModal.isOpen}
         onClose={() => setPolicyModal({ ...policyModal, isOpen: false })}

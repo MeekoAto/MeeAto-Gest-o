@@ -1,15 +1,13 @@
 import React, { useState } from 'react';
 import {
-  Headphones,
   MessageCircle,
-  Mail,
   Clock,
   Send,
   CheckCircle2,
   FileQuestion,
-  Video,
-  ShieldAlert,
+  AlertCircle,
 } from 'lucide-react';
+import { submitMeeAtoLead } from '../services/leadService';
 
 interface SupportSectionProps {
   onOpenTrial: () => void;
@@ -18,21 +16,50 @@ interface SupportSectionProps {
 export const SupportSection: React.FC<SupportSectionProps> = ({ onOpenTrial }) => {
   const [formSent, setFormSent] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
   const [formData, setFormData] = useState({
     name: '',
     businessName: '',
     segment: 'Adegas e Bares',
     whatsapp: '',
+    email: '',
+    city: '',
+    state: 'SP',
     message: '',
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const brazilianStates = [
+    'AC', 'AL', 'AP', 'AM', 'BA', 'CE', 'DF', 'ES', 'GO', 'MA',
+    'MT', 'MS', 'MG', 'PA', 'PB', 'PR', 'PE', 'PI', 'RJ', 'RN',
+    'RS', 'RO', 'RR', 'SC', 'SP', 'SE', 'TO',
+  ];
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
+    setErrorMessage(null);
+
+    const result = await submitMeeAtoLead({
+      name: formData.name,
+      business_name: formData.businessName,
+      whatsapp: formData.whatsapp,
+      email: formData.email,
+      city: formData.city,
+      state: formData.state,
+      business_type: formData.segment,
+      interest: 'Demonstração Comercial',
+      contact_preference: 'whatsapp',
+      message: formData.message,
+    });
+
+    setLoading(false);
+
+    if (result.success) {
       setFormSent(true);
-    }, 800);
+    } else {
+      setErrorMessage(result.error || 'Erro ao enviar dados. Tente novamente.');
+    }
   };
 
   return (
@@ -57,7 +84,7 @@ export const SupportSection: React.FC<SupportSectionProps> = ({ onOpenTrial }) =
             <div className="space-y-4">
               {/* WhatsApp Card */}
               <a
-                href="https://wa.me/5511999999999?text=Ol%C3%A1,%20gostaria%20de%20conhecer%20o%20MeeAto%20Gest%C3%A3o!"
+                href="https://wa.me/5511952065236?text=Ol%C3%A1!%20Gostaria%20de%20conhecer%20o%20MeeAto%20Gest%C3%A3o%20e%20falar%20com%20um%20especialista."
                 target="_blank"
                 rel="noopener noreferrer"
                 className="group p-5 rounded-2xl bg-emerald-50/50 border border-emerald-200/80 hover:border-emerald-300 transition-all flex items-start gap-4 block"
@@ -120,10 +147,10 @@ export const SupportSection: React.FC<SupportSectionProps> = ({ onOpenTrial }) =
                   <CheckCircle2 className="w-8 h-8" />
                 </div>
                 <h3 className="text-xl font-bold text-slate-900">
-                  Mensagem recebida com sucesso!
+                  Recebemos seu interesse!
                 </h3>
-                <p className="text-sm text-slate-600 max-w-sm mx-auto">
-                  Obrigado pelo contato. Um especialista da equipe MeeAto entrará em contato com você via WhatsApp em breve.
+                <p className="text-sm text-slate-600 max-w-md mx-auto leading-relaxed">
+                  Entraremos em contato para apresentar a solução MeeAto e entender as necessidades do seu negócio.
                 </p>
                 <button
                   onClick={() => setFormSent(false)}
@@ -133,7 +160,7 @@ export const SupportSection: React.FC<SupportSectionProps> = ({ onOpenTrial }) =
                 </button>
               </div>
             ) : (
-              <form onSubmit={handleSubmit} className="space-y-4">
+              <form onSubmit={handleSubmit} className="space-y-3.5">
                 <div className="mb-2">
                   <h3 className="text-xl font-bold text-slate-900">
                     Fale com um Especialista MeeAto
@@ -143,9 +170,16 @@ export const SupportSection: React.FC<SupportSectionProps> = ({ onOpenTrial }) =
                   </p>
                 </div>
 
+                {errorMessage && (
+                  <div className="p-3 rounded-xl bg-red-50 border border-red-200 text-red-700 text-xs flex items-center gap-2">
+                    <AlertCircle className="w-4 h-4 shrink-0 text-red-600" />
+                    <span>{errorMessage}</span>
+                  </div>
+                )}
+
                 <div>
                   <label className="block text-xs font-semibold text-slate-700 mb-1">
-                    Seu Nome Completo
+                    Seu Nome Completo *
                   </label>
                   <input
                     type="text"
@@ -153,14 +187,14 @@ export const SupportSection: React.FC<SupportSectionProps> = ({ onOpenTrial }) =
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                     placeholder="Ex: João da Silva"
-                    className="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-xs sm:text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
                     <label className="block text-xs font-semibold text-slate-700 mb-1">
-                      Nome do Comércio
+                      Nome do Comércio *
                     </label>
                     <input
                       type="text"
@@ -168,17 +202,17 @@ export const SupportSection: React.FC<SupportSectionProps> = ({ onOpenTrial }) =
                       value={formData.businessName}
                       onChange={(e) => setFormData({ ...formData, businessName: e.target.value })}
                       placeholder="Ex: Adega Prime"
-                      className="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      className="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-xs sm:text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                   </div>
                   <div>
                     <label className="block text-xs font-semibold text-slate-700 mb-1">
-                      Segmento
+                      Segmento *
                     </label>
                     <select
                       value={formData.segment}
                       onChange={(e) => setFormData({ ...formData, segment: e.target.value })}
-                      className="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      className="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-xs sm:text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
                     >
                       <option value="Adegas e Bares">Adega / Bar / Lounge</option>
                       <option value="Restaurantes">Restaurante / Pizzaria</option>
@@ -189,18 +223,67 @@ export const SupportSection: React.FC<SupportSectionProps> = ({ onOpenTrial }) =
                   </div>
                 </div>
 
-                <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1">
-                    WhatsApp com DDD
-                  </label>
-                  <input
-                    type="tel"
-                    required
-                    value={formData.whatsapp}
-                    onChange={(e) => setFormData({ ...formData, whatsapp: e.target.value })}
-                    placeholder="(11) 98765-4321"
-                    className="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  />
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-700 mb-1">
+                      WhatsApp com DDD *
+                    </label>
+                    <input
+                      type="tel"
+                      required
+                      value={formData.whatsapp}
+                      onChange={(e) => setFormData({ ...formData, whatsapp: e.target.value })}
+                      placeholder="(11) 98765-4321"
+                      className="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-xs sm:text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-700 mb-1">
+                      E-mail *
+                    </label>
+                    <input
+                      type="email"
+                      required
+                      value={formData.email}
+                      onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                      placeholder="contato@comercio.com"
+                      className="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-xs sm:text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                  <div className="sm:col-span-2">
+                    <label className="block text-xs font-semibold text-slate-700 mb-1">
+                      Cidade *
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      value={formData.city}
+                      onChange={(e) => setFormData({ ...formData, city: e.target.value })}
+                      placeholder="Ex: Campinas"
+                      className="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-xs sm:text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-700 mb-1">
+                      Estado (UF) *
+                    </label>
+                    <select
+                      value={formData.state}
+                      onChange={(e) => setFormData({ ...formData, state: e.target.value })}
+                      className="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-xs sm:text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    >
+                      {brazilianStates.map((uf) => (
+                        <option key={uf} value={uf}>
+                          {uf}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
                 </div>
 
                 <div>
@@ -208,21 +291,21 @@ export const SupportSection: React.FC<SupportSectionProps> = ({ onOpenTrial }) =
                     Como podemos ajudar? (Opcional)
                   </label>
                   <textarea
-                    rows={3}
+                    rows={2}
                     value={formData.message}
                     onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                     placeholder="Ex: Gostaria de saber como funciona o controle por cartões NFC e emissão de cupom fiscal..."
-                    className="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+                    className="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-xs sm:text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
                   />
                 </div>
 
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full py-3 bg-blue-600 hover:bg-blue-500 active:scale-[0.98] text-white rounded-xl text-sm font-semibold transition-all flex items-center justify-center gap-2 shadow-sm"
+                  className="w-full py-3 bg-blue-600 hover:bg-blue-500 active:scale-[0.98] text-white rounded-xl text-sm font-semibold transition-all flex items-center justify-center gap-2 shadow-sm disabled:opacity-60"
                 >
                   <Send className="w-4 h-4" />
-                  <span>{loading ? 'Enviando...' : 'Solicitar Demonstração Gratuita'}</span>
+                  <span>{loading ? 'Enviando...' : 'Solicitar demonstração'}</span>
                 </button>
               </form>
             )}

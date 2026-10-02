@@ -1,15 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { Logo } from './common/Logo';
-import { Search, Menu, X, ArrowRight, UserCheck } from 'lucide-react';
+import { Search, Menu, X } from 'lucide-react';
 
 interface HeaderProps {
-  onOpenLogin: () => void;
   onOpenTrial: () => void;
   onOpenSearch: () => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
-  onOpenLogin,
   onOpenTrial,
   onOpenSearch,
 }) => {
@@ -21,7 +19,7 @@ export const Header: React.FC<HeaderProps> = ({
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 20);
 
-      const sections = ['inicio', 'gestao', 'connector', 'planos', 'downloads', 'suporte', 'contato'];
+      const sections = ['inicio', 'gestao', 'connector', 'solucoes', 'demonstracao', 'suporte', 'contato'];
       const scrollPos = window.scrollY + 100;
       for (const section of sections) {
         const el = document.getElementById(section);
@@ -44,8 +42,8 @@ export const Header: React.FC<HeaderProps> = ({
     { name: 'Início', href: '#inicio', id: 'inicio' },
     { name: 'MeeAto Gestão', href: '#gestao', id: 'gestao' },
     { name: 'Connector', href: '#connector', id: 'connector' },
-    { name: 'Planos', href: '#planos', id: 'planos' },
-    { name: 'Downloads', href: '#downloads', id: 'downloads' },
+    { name: 'Soluções', href: '#solucoes', id: 'solucoes' },
+    { name: 'Demonstração', href: '#demonstracao', id: 'demonstracao' },
     { name: 'Suporte', href: '#suporte', id: 'suporte' },
     { name: 'Contato', href: '#contato', id: 'contato' },
   ];
@@ -109,26 +107,18 @@ export const Header: React.FC<HeaderProps> = ({
             <button
               onClick={onOpenSearch}
               className="p-2 text-slate-400 hover:text-white hover:bg-slate-800/60 rounded-lg transition-colors"
-              title="Buscar no site e documentação (Ctrl + K)"
+              title="Buscar no site (Ctrl + K)"
               aria-label="Buscar"
             >
               <Search className="w-4 h-4" />
             </button>
 
-            {/* Login Button */}
-            <button
-              onClick={onOpenLogin}
-              className="px-4 py-2 text-sm font-medium text-slate-200 bg-slate-900/80 hover:bg-slate-800 border border-slate-700/80 hover:border-slate-600 rounded-lg transition-all"
-            >
-              Entrar
-            </button>
-
-            {/* Trial CTA */}
+            {/* Trial / Demo CTA */}
             <button
               onClick={onOpenTrial}
               className="px-4 py-2 text-sm font-semibold text-white bg-blue-600 hover:bg-blue-500 rounded-lg shadow-sm shadow-blue-500/30 hover:shadow-blue-500/50 transition-all flex items-center gap-1.5"
             >
-              <span>Começar agora</span>
+              <span>Solicitar demonstração</span>
             </button>
           </div>
 
@@ -171,20 +161,11 @@ export const Header: React.FC<HeaderProps> = ({
             <button
               onClick={() => {
                 setMobileMenuOpen(false);
-                onOpenLogin();
-              }}
-              className="w-full py-2.5 text-center text-sm font-medium text-slate-200 bg-slate-900 border border-slate-700 rounded-lg"
-            >
-              Entrar
-            </button>
-            <button
-              onClick={() => {
-                setMobileMenuOpen(false);
                 onOpenTrial();
               }}
               className="w-full py-2.5 text-center text-sm font-semibold text-white bg-blue-600 hover:bg-blue-500 rounded-lg shadow-sm"
             >
-              Começar agora
+              Solicitar demonstração
             </button>
           </div>
         </div>
